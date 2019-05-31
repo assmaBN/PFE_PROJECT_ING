@@ -1,42 +1,32 @@
 package sopra.belgium.eid;
 
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Base64.Decoder;
 
+
+import java.io.IOException;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import sopra.belgium.eid.exceptions.EIDException;
 import sopra.belgium.eid.metier.BeID;
-import sopra.belgium.eid.objects.IDData;
+
 
 @RestController
 public class Read_Data_Controller {
-	//http://dlnxhradev02.ptx.fr.sopra:30522
 	@CrossOrigin(origins = "*")
-	@RequestMapping("/")
-	public Datas getData() throws Exception {
-		
-				
+	@GetMapping(value="/")
+	public Datas getData() throws IOException, Exception {
 		
 			BeID eID = new BeID(true); // We allow information to be fetched
 										// from test cards
-			
 			String[] data = eID.getIDData().tabString();
 			String[] dataAddr = eID.getIDAddress().tabString();
-			String convertedImage , path ;
+			String convertedImage ;
+			String path ;
 			if (eID.readPhotoData())
 			{
 				eID.getIDPhoto().writeToFile("photoeID");
 				path = eID.getIDPhoto().pathImage();
-				System.out.println("Path Image : "+eID.getIDPhoto().pathImage());
-				
-				
-				 convertedImage = eID.convertToBase64();
+				convertedImage = eID.convertToBase64();
 			}
 			else 
 			{
@@ -52,12 +42,10 @@ public class Read_Data_Controller {
 			eID.disconnect();
 			return dataa;
 			
-		
-	
 }
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping("/check")
+	@GetMapping(value="/check")
 	public Connexion checkConnexion() throws Exception{
 		
 			Connexion connexion ;
@@ -66,7 +54,7 @@ public class Read_Data_Controller {
 			return connexion;
 }
 	@CrossOrigin(origins = "*")
-	@RequestMapping("/checkval")
+	@GetMapping(value="/checkval")
 	public CardValidity checkValidity() throws Exception{
 		CardValidity crdval;
 		BeID eID = new BeID(true);

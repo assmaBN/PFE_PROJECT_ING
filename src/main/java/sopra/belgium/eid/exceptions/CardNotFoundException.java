@@ -90,6 +90,7 @@ public class CardNotFoundException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The card wasn't found in the system (" + fType + ").";
 	}

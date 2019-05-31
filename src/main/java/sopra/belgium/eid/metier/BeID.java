@@ -21,13 +21,9 @@
  */
 package sopra.belgium.eid.metier;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-//import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
-//import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -35,12 +31,6 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.Base64;
 
-//import java.security.cert.CertificateFactory;
-//import java.security.cert.X509CRL;
-//import java.security.cert.X509Certificate;
-//import java.util.ArrayList;
-//import java.util.List;
-//import org.apache.commons.io.FileUtils;
 
 import sopra.belgium.eid.exceptions.EIDException;
 import sopra.belgium.eid.exceptions.HashVerificationException;
@@ -62,9 +52,6 @@ import sopra.belgium.eid.security.RNCertificate;
  * should be used when trying to perform high-level operations in your own
  * system. Every operation connects to the smart card if not yet connected
  * before performing the operation itself.
- * 
- * TODO Check SW's after every execution of transmitAPDU. Perhaps check the SW
- * there and throw the exception
 
  */
 public class BeID extends SmartCard {
@@ -120,7 +107,7 @@ public class BeID extends SmartCard {
 			final byte[] signatureFileToRead = { IDData.fgDFID[0],
 					IDData.fgDFID[1], IDData.fgDataTag, IDData.fgDataTagIDSIG };
 			
-			readData = super.readFile(fileToRead, IDData.fgMAX_RAW_LEN);
+			readData = super.readFile(fileToRead, IDData.MAX_LEN);
 			
 			readSignatureData = super.readFile(signatureFileToRead,
 					IDData.fgMAX_SIGNATURE_LEN);
@@ -184,7 +171,7 @@ public class BeID extends SmartCard {
 					IDAddress.fgMAX_SIGNATURE_LEN);
 			readAddrSignature = super.readFile(addrSigFileToRead,
 					IDAddress.fgMAX_SIGNATURE_LEN);
-			readDataRaw = super.readFile(fileToRead, IDAddress.fgMAX_RAW_LEN);
+			readDataRaw = super.readFile(fileToRead, IDAddress.MAX_LEN);
 
 			// Trim trailing zeroes of read data
 			int indexLastNonZero = -1;
@@ -237,7 +224,7 @@ public class BeID extends SmartCard {
 			final byte[] fileToRead = { IDPhoto.fgDFID[0], IDPhoto.fgDFID[1],
 					IDPhoto.fgDataTag, IDPhoto.fgDataTagPHOTO };
 
-			readData = super.readFile(fileToRead, IDPhoto.fgMAX_RAW_LEN);
+			readData = super.readFile(fileToRead, IDPhoto.MAX_LEN);
 			readdata =  readData;
 			final IDPhoto photo = IDPhoto.parse(readdata);
 			if (verifyRoot()) {
@@ -262,8 +249,7 @@ public class BeID extends SmartCard {
 	 */
 	public IDPhoto getIDPhoto() throws EIDException {
 
-			final IDPhoto photo = IDPhoto.parse(readdata);
-			return photo;
+			return IDPhoto.parse(readdata);
 		
 	}
 	
@@ -282,9 +268,7 @@ public class BeID extends SmartCard {
 		
 			
 			//************encode to base64'******************//
-			
-			String encodedfile = Base64.getEncoder().encodeToString(readdata);
-			return encodedfile;
+			return Base64.getEncoder().encodeToString(readdata);
 			
 //			//*************************************************//
 

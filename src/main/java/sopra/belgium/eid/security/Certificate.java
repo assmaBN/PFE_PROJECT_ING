@@ -52,7 +52,7 @@ public abstract class Certificate implements Verifiable, SmartCardReadable {
 	private final byte[] contents;
 
 	/** Contains the ID of the certificate */
-	private final String ID;
+	private final String id;
 
 	/** Contains the status of the certificate */
 	private CertificateStatus status;
@@ -62,16 +62,16 @@ public abstract class Certificate implements Verifiable, SmartCardReadable {
 	 * 
 	 * @param contents
 	 *            are the contents of the certificate
-	 * @param ID
+	 * @param id
 	 *            is the identification for the certificate
 	 */
-	public Certificate(final byte[] contents, final String ID) {
+	public Certificate(final byte[] contents, final String id) {
 		// Preconditions
-		assert (ID.length() <= fgMAX_CERT_ID_LEN);
+		assert (id.length() <= fgMAX_CERT_ID_LEN);
 		assert (contents.length <= fgMAX_CERT_LEN);
 
 		this.contents = contents.clone();
-		this.ID = ID;
+		this.id = id;
 		this.status = CertificateStatus.BEID_CERTSTATUS_CERT_NOT_VALIDATED;
 	}
 
@@ -87,10 +87,10 @@ public abstract class Certificate implements Verifiable, SmartCardReadable {
 	/**
 	 * Returns the ID of the certificate.
 	 * 
-	 * @return the ID
+	 * @return the id
 	 */
 	public String getID() {
-		return ID;
+		return id;
 	}
 
 	/**
@@ -154,10 +154,8 @@ public abstract class Certificate implements Verifiable, SmartCardReadable {
 			CertificateException {
 		ByteArrayInputStream bais = new ByteArrayInputStream(this.getContents());
 		final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		//System.out.println("cf :"+ cf);
 		final X509Certificate cert = (X509Certificate) cf
 				.generateCertificate(bais);
-		//System.out.println("cert"+ cert);
 
 		return cert;
 	}

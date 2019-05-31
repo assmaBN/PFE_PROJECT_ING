@@ -70,6 +70,7 @@ public class InvalidSWException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The returned status word values " + fSW1 + " and " + fSW2
 				+ " should have been 0x90 and 0x00.";

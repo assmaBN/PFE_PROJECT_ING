@@ -50,6 +50,7 @@ public class BufferTooSmallException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The given buffer size was too small to store the requested data in.";
 	}

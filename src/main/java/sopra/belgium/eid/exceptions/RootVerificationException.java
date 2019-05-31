@@ -52,6 +52,7 @@ public class RootVerificationException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The root certificate is incorrect.";
 	}

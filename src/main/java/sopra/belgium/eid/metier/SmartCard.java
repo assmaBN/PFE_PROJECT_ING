@@ -22,10 +22,12 @@
 package sopra.belgium.eid.metier;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.naming.CommunicationException;
 import javax.smartcardio.ATR;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
@@ -85,13 +87,21 @@ public class SmartCard {
 	
 	/**
 	 * Clear the terminal list
+	 * @throws ClassNotFoundException 
+	 * @throws SecurityException 
+	 * @throws NoSuchFieldException 
+	 * @throws InvocationTargetException 
+	 * @throws NoSuchMethodException 
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
 	 * 
 	 *
 	 * @throws Exception 
 	 */
 
 	//************************************************************//
-	public void cleanCache() throws Exception {
+	public void cleanCache() throws  
+	ClassNotFoundException, NoSuchFieldException,   IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		Class pcscterminal = Class.forName("sun.security.smartcardio.PCSCTerminals");
         Field contextId = pcscterminal.getDeclaredField("contextId");
         contextId.setAccessible(true);
@@ -100,17 +110,17 @@ public class SmartCard {
         {
             // First get a new context value
             Class pcsc = Class.forName("sun.security.smartcardio.PCSC");
-            Method SCardEstablishContext = pcsc.getDeclaredMethod(
+            Method sCardEstablishContext = pcsc.getDeclaredMethod(
                                                "SCardEstablishContext",
                                                new Class[] {Integer.TYPE }
                                            );
-            SCardEstablishContext.setAccessible(true);
+            sCardEstablishContext.setAccessible(true);
 
-            Field SCARD_SCOPE_USER = pcsc.getDeclaredField("SCARD_SCOPE_USER");
-            SCARD_SCOPE_USER.setAccessible(true);
+            Field sCARD_SCOPE_USER = pcsc.getDeclaredField("SCARD_SCOPE_USER");
+            sCARD_SCOPE_USER.setAccessible(true);
 
-            long newId = ((Long)SCardEstablishContext.invoke(pcsc, 
-                    new Object[] { SCARD_SCOPE_USER.getInt(pcsc) }
+            long newId = ((Long)sCardEstablishContext.invoke(pcsc, 
+                    new Object[] { sCARD_SCOPE_USER.getInt(pcsc) }
             ));
             contextId.setLong(pcscterminal, newId);
             TerminalFactory factory = TerminalFactory.getDefault();
@@ -131,26 +141,31 @@ public class SmartCard {
 	 * Verifie if the card is connected or not
 	 * 
 	 *@return whether it is already connected
+	 * @throws InvocationTargetException 
+	 * @throws NoSuchMethodException 
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 * @throws SecurityException 
+	 * @throws NoSuchFieldException 
+	 * @throws ClassNotFoundException 
+	 * @throws CommunicationException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws NoReadersFoundException 
 	 * @throws Exception 
 	 */
-		public boolean verifyCardConnected() throws Exception{
+		public boolean verifyCardConnected() throws CardException, CommunicationException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, NoSuchAlgorithmException, NoReadersFoundException{
 			if (!isConnected) {
 				cleanCache();
 				TerminalFactory factory = TerminalFactory.getInstance("PC/SC", null);
-				System.out.println(""+factory);
 				List<CardTerminal> terminals = factory.terminals().list();
-				//System.out.println(""+terminals.size());
 				if (terminals.size() > 0) {
 					// get the first terminal
 					terminal = terminals.get(0);
-					System.out.println(""+terminal);
 					// establish a connection with the card
-					if (terminal.isCardPresent() == false) {
-				        return false;
-					}
-					else {
-						return true;
-						}
+					
+						terminal.isCardPresent();
+					
+					
 					
 				} else {
 					throw new NoReadersFoundException();
@@ -163,23 +178,27 @@ public class SmartCard {
 		 * Verifie if it is a smart card or not
 		 * 
 		 *@return 
+		 * @throws NoReadersFoundException 
+		 * @throws CardException 
+		 * @throws NoSuchAlgorithmException 
+		 * @throws InvocationTargetException 
+		 * @throws NoSuchMethodException 
+		 * @throws IllegalAccessException 
+		 * @throws NoSuchFieldException 
+		 * @throws ClassNotFoundException 
 		 * @throws Exception 
 		 */
-		public String verifycard() throws Exception{
+		public String verifycard() throws CommunicationException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, NoSuchAlgorithmException, CardException, NoReadersFoundException{
 			if (this.verifyCardConnected()){
 				try {
 					card = terminal.connect("*");
-					System.out.println("connection to card ...");
 					atr = card.getATR();
 					channel = card.getBasicChannel();
 					isConnected = true;
-					//System.out.println("connected");
 					exception = "it's a smart card";
 				}
 				catch (Exception e) {
 					exception = "not a smart card";
-					System.out.println("exception :"+ exception);
-					System.out.println("exception :"+ e);
 				}
 			}
 			
@@ -194,7 +213,7 @@ public class SmartCard {
 	 * connected to the system nothing will be done.
 	 * @throws Exception 
 	 */
-	public void connectCard() throws Exception, EIDException {
+	public void connectCard() throws  Exception {
 		if (!isConnected) {
 			// show the list of available terminals
 			// Connects with the first available smart card reader
@@ -204,33 +223,23 @@ public class SmartCard {
 			
 			
 			TerminalFactory factory = TerminalFactory.getInstance("PC/SC", null);
-			System.out.println(""+factory);
 			List<CardTerminal> terminals = factory.terminals().list();
-			//System.out.println(""+terminals.size());
 			if (terminals.size() > 0) {
 				// get the first terminal
 				terminal = terminals.get(0);
-				System.out.println(""+terminal);
 				// establish a connection with the card
-				if (terminal.isCardPresent() == false) {
-			        System.out.println("*** Insert card");
-			        if (terminal.waitForCardPresent(0) == false) {
+				if (!terminal.isCardPresent() && !terminal.waitForCardPresent(10)) {
 			            throw new Exception("no card available");
 			        }
-				}
-				System.out.println("connection to card ...");
+				
 				try {
 					card = terminal.connect("*");
-					System.out.println("connection to card ...");
 					atr = card.getATR();
 					channel = card.getBasicChannel();
 					isConnected = true;
-					//System.out.println("connected");
 				}
 				catch (Exception e) {
 					exception = "not a smart card";
-					System.out.println("exception :"+ exception);
-					System.out.println("exception :"+ e);
 				}
 			} else {
 				throw new NoReadersFoundException();
@@ -497,7 +506,8 @@ public class SmartCard {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// Ignore
+			System.err.println(e);
+			Thread.currentThread().interrupt();
 		}
 		
 		return result;

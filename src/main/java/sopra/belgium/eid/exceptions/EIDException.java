@@ -45,6 +45,7 @@ public class EIDException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "EID Exception: " + super.getCause().getMessage();
 	}

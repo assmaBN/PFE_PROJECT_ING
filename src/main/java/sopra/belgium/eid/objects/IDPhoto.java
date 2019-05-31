@@ -21,15 +21,12 @@
  */
 package sopra.belgium.eid.objects;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import sopra.belgium.eid.objects.SmartCardReadable;
 import sopra.belgium.eid.util.*;
 
 /**
@@ -43,7 +40,7 @@ public class IDPhoto implements SmartCardReadable {
 	public final static char[] fgPHOTO = { fgDataTag, fgDataTagPHOTO };
 
 	/** Contains the maximum size (in number of bytes) that the IDPhoto can take */
-	public final static int fgMAX_RAW_LEN = 4096;
+	public final static int MAX_LEN = 4096;
 
 	/** Contains the extension of the photo that indicates the format */
 	public final static String EXTENSION = ".jpeg";
@@ -84,14 +81,6 @@ public class IDPhoto implements SmartCardReadable {
 		return photo.clone();
 	}
 
-	/**
-	 * Returns the photo of the holder of the ID as an image.
-	 * 
-	 * @return the image of the photo
-	 */
-//	public Image getImage() {
-//		return Toolkit.getDefaultToolkit().createImage(photo);
-//	}
 
 	/**
 	 * Writes the photo of the holder of the ID to the given file. The image is
@@ -112,7 +101,6 @@ public class IDPhoto implements SmartCardReadable {
 				file.createNewFile();
 			}
 			fos.write(photo);
-			//System.out.println("path Image : "+file.getAbsolutePath());
 			pathImage = file.getAbsolutePath();
 		} finally {
 			if (fos != null) {
@@ -138,13 +126,10 @@ public class IDPhoto implements SmartCardReadable {
 		try {
 			// Create a hash of the photo data
 			final MessageDigest md = MessageDigest.getInstance("SHA-1");
-			//System.out.println("md"+md);
 			byte[] sha1hash = new byte[40];
 			md.update(photo);
 			sha1hash = md.digest();
 			final String actualHash = FormattedTLV.hexify(sha1hash);
-			//System.out.println("actualhash"+actualHash);
-			//System.out.println("hash"+ByteConverter.hexify(hash));
 			// Check whether equal
 			return actualHash.equals(FormattedTLV.hexify(hash));
 		} catch (NoSuchAlgorithmException e) {

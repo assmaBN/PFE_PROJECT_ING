@@ -62,6 +62,7 @@ public class TagNotFoundException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The given tag: " + fTag + " was not found in the TLV elements.";
 	}

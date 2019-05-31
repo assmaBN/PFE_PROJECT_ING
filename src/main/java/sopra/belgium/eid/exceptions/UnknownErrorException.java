@@ -64,6 +64,7 @@ public class UnknownErrorException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The error with code " + fErrorCode
 				+ " that occurred is unknown.";

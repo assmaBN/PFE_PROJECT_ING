@@ -21,13 +21,11 @@
  */
 package sopra.belgium.eid.objects;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import sopra.belgium.eid.exceptions.TagNotFoundException;
-import sopra.belgium.eid.objects.SmartCardReadable;
 import sopra.belgium.eid.util.FormattedTLV;
 
 /**
@@ -52,7 +50,7 @@ public class IDData implements SmartCardReadable {
 	public final static char[] fgID = { fgDataTag, fgDataTagID };
 
 	/** Contains the maximum size (in number of bytes) that the IDData can take */
-	public final static int fgMAX_RAW_LEN = 1024;
+	public final static int MAX_LEN = 1024;
 
 	/** Contains the signature ID specific file attributes to read from */
 	public final static char[] fgSIGID = { fgDataTag, fgDataTagIDSIG };
@@ -115,7 +113,7 @@ public class IDData implements SmartCardReadable {
 	 *             format. If this occurs often, the ID card may be invalid
 	 */
 	public static IDData parse(final byte[] characterStream)
-			throws TagNotFoundException, ParseException {
+			throws  ParseException {
 		// Contains the TLV reader
 		
 		final FormattedTLV fTLV = new FormattedTLV(characterStream);

@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import sopra.belgium.eid.exceptions.TagNotFoundException;
 
 /**
  * This class makes sure that the low-level TLV character/byte streams can be
@@ -160,7 +159,6 @@ public class FormattedTLV extends TLV {
 		if (super.tagData(tag) == null) {
 			return null;
 		} else {
-			// TODO Work with locales
 			
 			// Since the dates stored on our card are written in the native
 			// language instead of English the names of the months have to

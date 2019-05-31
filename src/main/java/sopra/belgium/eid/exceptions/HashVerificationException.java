@@ -66,6 +66,7 @@ public class HashVerificationException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The " + fObjectName
 				+ "  object couldn't be verified correctly against it's hash";

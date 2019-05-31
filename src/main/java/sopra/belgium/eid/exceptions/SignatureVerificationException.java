@@ -67,6 +67,7 @@ public class SignatureVerificationException extends Exception {
 	 * 
 	 * @see java.lang.Throwable#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return "The data of the " + fObjectName
 				+ "  couldn't be verified correctly against it's signature";

@@ -37,16 +37,16 @@ public class IDAddress implements SmartCardReadable {
 	 * Contains the maximum size (in number of bytes) that the IDAddress can
 	 * take
 	 */
-	public final static int fgMAX_RAW_LEN = 512;
+	public final static int MAX_LEN = 512;
 
 	/** Contains the street where the holder of the ID lives */
-	private final String Street;
+	private final String street;
 
 	/** Contains the zip-code of the area in which the holder of the ID lives */
-	private final String ZipCode;
+	private final String zipCode;
 
 	/** Contains the municipality where the holder of the ID lives */
-	private final String Municipality;
+	private final String municipality;
 
 	/**
 	 * Parses the given stream of characters into a valid IDAddress object
@@ -61,8 +61,7 @@ public class IDAddress implements SmartCardReadable {
 	 *             indicates that some of the data hasn't been read in a proper
 	 *             format. If this occurs often, the ID card may be invalid
 	 */
-	public static IDAddress parse(final byte[] characterStream)
-			throws TagNotFoundException {
+	public static IDAddress parse(final byte[] characterStream) {
 		final FormattedTLV fTLV = new FormattedTLV(characterStream);
 
 		return new IDAddress(fTLV.stringData((byte) 0x01), 
@@ -82,18 +81,18 @@ public class IDAddress implements SmartCardReadable {
 	 */
 	public IDAddress(final String street, final String zipCode,
 			final String municipality) {
-		Street = street;
-		ZipCode = zipCode;
-		Municipality = municipality;
+		this.street = street;
+		this.zipCode = zipCode;
+		this.municipality = municipality;
 	}
 
 
 	
 	public String[] tabString() {
 		String[] tabs = new String[3];
-		tabs[0]= Street;
-		tabs[1]= ZipCode;
-		tabs[2]= Municipality;
+		tabs[0]= street;
+		tabs[1]= zipCode;
+		tabs[2]= municipality;
 		return tabs;
 	}
 	
@@ -103,7 +102,7 @@ public class IDAddress implements SmartCardReadable {
 	 * @return the street
 	 */
 	public String getStreet() {
-		return Street;
+		return street;
 	}
 
 	/**
@@ -112,7 +111,7 @@ public class IDAddress implements SmartCardReadable {
 	 * @return the zip code
 	 */
 	public String getZipCode() {
-		return ZipCode;
+		return zipCode;
 	}
 
 	/**
@@ -121,6 +120,6 @@ public class IDAddress implements SmartCardReadable {
 	 * @return the municipality
 	 */
 	public String getMunicipality() {
-		return Municipality;
+		return municipality;
 	}
 }
